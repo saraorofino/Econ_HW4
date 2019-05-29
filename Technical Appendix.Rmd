@@ -48,6 +48,8 @@ $Marginal~Cost~Abatement~Sector~A = `r slope_a`*q + `r int_a`$
 ```{r, include=FALSE, message=FALSE}
 
 # First make trial graph to see what function it might be
+
+# sam is gonna use linear
 trial_b <- ggplot(carbon, aes(x=abatement, y=mc_b)) +
   geom_point() +
   geom_smooth()
@@ -58,24 +60,23 @@ trial_b
 
 # Try fitting polynomial regression
 
-b_lm <- lm(mc_b ~ abatement + I(abatement^2) + I(abatement^3), data = carbon)
+b_lm <- lm(mc_b ~ abatement, data = carbon)
 
 # Graph it to check the fit 
 b_lm_graph <- ggplot(carbon, aes(x=abatement, y=mc_b)) +
   geom_point() + 
-  geom_smooth(method = "lm", formula = y~x+I(x^2)+ I(x^3))
+  geom_smooth(method = "lm", formula = y~x)
 
 b_lm_graph
 
 # Fit looks okay - save the regression coefficients
 int_b <- b_lm$coefficients[1]
-c1_b <- b_lm$coefficients[2]
-c2_b <- b_lm$coefficients[3]
-c3_b <- b_lm$coefficients[4]
+slope_b <- b_lm$coefficients[2]
+
 
 ```
 
-$Marginal~Cost~Abatement~Sector~B = `r int_b` + (`r c1_b`)q + (`r c2_b`)q^2 + (`r c3_b`)q^3$   
+$Marginal~Cost~Abatement~Sector~B = `r slope_b`*q + `r int_b`$
 
 
 ####Sector C
