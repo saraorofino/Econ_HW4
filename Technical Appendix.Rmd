@@ -56,8 +56,6 @@ trial_b <- ggplot(carbon, aes(x=abatement, y=mc_b)) +
 
 trial_b
 
-.
-
 # Try fitting linear regression
 
 b_lm <- lm(mc_b ~ abatement, data = carbon)
@@ -65,9 +63,10 @@ b_lm <- lm(mc_b ~ abatement, data = carbon)
 # Graph it to check the fit 
 b_lm_graph <- ggplot(carbon, aes(x=abatement, y=mc_b)) +
   geom_point() + 
-  geom_smooth(method = "lm", formula = y~x)
+  geom_smooth(method = "lm", formula = y~x+I(x^2))
 
 b_lm_graph
+
 
 # Fit looks okay - save the regression coefficients
 int_b <- b_lm$coefficients[1]
@@ -92,6 +91,8 @@ trial_c
 # Looks exponential (check lab 4 from 244 if you have to use nls)
 
 # mutate a new column of exp(Abatement) than lm(Price~exp(abatement)), you will end up y= b0+ b1*exp(x)
+
+# sam used linear for all, he said it is gonna be easier for the later parts
 
 
 ```
@@ -129,7 +130,7 @@ d_lm_graph
 
 ```
 
-$Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d*q^2` +`r int_b`$
+$Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d*q^2` +`r int_d`$
 
 ###2. Demand for Carbon Emissions 
 
@@ -171,6 +172,14 @@ curve(d_b, from=0, to=200, xlab = "x", ylab = "y")
 
 # Plug in quantities into function to check
 demand_b <- d_b(quantity_b)
+
+
+######## Sector C Demand Curve:  
+
+
+######## Sector D Demand Curve:  
+
+
 ```
 
 
@@ -191,6 +200,9 @@ Sector C:
 
 Sector D:
 
+$Price~of~Emissions = `r c1_d`*(300-q) + `r c2_d*(300-q)^2` +`r int_d``$  
+
+- Willingness to Pay for First Unit = \$62.66
 
 
 ###3. Country X
