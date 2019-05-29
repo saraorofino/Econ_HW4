@@ -21,25 +21,74 @@ carbon <- read_csv("HW4Data.csv") %>%
 ####Sector A
 
 ```{r, include=FALSE, message=FALSE}
+# First make trial graph to see what function it might be 
+trial_a <- ggplot(carbon, aes(x=abatement, y=mc_a)) +
+  geom_point() +
+  geom_smooth()
 
+trial_a 
 
+# Looks linear
 
+# Use linear regression to find the equation of the line
+
+a_lm <- lm(mc_a ~ abatement, data=carbon)
+
+# Store coefficients of regression
+int_a <- a_lm$coefficients[1]
+slope_a <- a_lm$coefficients[2]
+
+ 
 ```
 
+$Marginal~Cost~Abatement~Sector~A = `r slope_a`*q + `r int_a`$  
 
 ####Sector B
 
 ```{r, include=FALSE, message=FALSE}
 
+# First make trial graph to see what function it might be
+trial_b <- ggplot(carbon, aes(x=abatement, y=mc_b)) +
+  geom_point() +
+  geom_smooth()
 
+trial_b
+
+# looks polynomial ...
+
+# Try fitting polynomial regression
+
+b_lm <- lm(mc_b ~ abatement + I(abatement^2) + I(abatement^3), data = carbon)
+
+# Graph it to check the fit 
+b_lm_graph <- ggplot(carbon, aes(x=abatement, y=mc_b)) +
+  geom_point() + 
+  geom_smooth(method = "lm", formula = y~x+I(x^2)+ I(x^3))
+
+b_lm_graph
+
+# Fit looks okay - save the regression coefficients
+int_b <- b_lm$coefficients[1]
+c1_b <- b_lm$coefficients[2]
+c2_b <- b_lm$coefficients[3]
+c3_b <- b_lm$coefficients[4]
 
 ```
+
+$Marginal~Cost~Abatement~Sector~B = `r int_b` + (`r c1_b`)q + (`r c2_b`)q^2 + (`r c3_b`)q^3$   
 
 
 ####Sector C
 
 ```{r, include=FALSE, message=FALSE}
+# First make trial graph to see what function it might be
+trial_c <- ggplot(carbon, aes(x=abatement, y=mc_c)) +
+  geom_point() +
+  geom_smooth()
 
+trial_c
+
+# Looks exponential (check lab 4 from 244 if you have to use nls)
 
 
 ```
@@ -49,14 +98,66 @@ carbon <- read_csv("HW4Data.csv") %>%
 ####Sector D
 
 ```{r, include=FALSE, message=FALSE}
+# First make trial graph to see what function it might be
+trial_d <- ggplot(carbon, aes(x=abatement, y=mc_d)) +
+  geom_point() +
+  geom_smooth()
 
-
+trial_d
+# ????
 
 ```
 
 ###2. Demand for Carbon Emissions 
 
+```{r, include=FALSE}
 
+####### Sector A Demand Curve:  
+# Current emissions are 180 - use quantities from 0 to 180 by 10
+quantity_a <- seq(0,180,by=10)
+
+
+# Write function for demand curve for Sector A
+
+d_a <- function(q){
+  (slope_a*(180-q)) + int_a
+}
+
+# Derive demand curve using the values above
+demand_a <- d_a(quantity_a)
+
+# Graph it to see if this worked....
+curve(d_a, from=0, to=180, xlab = "x", ylab = "y")
+
+# willing to pay 95.2 for the first ton of emissions 
+
+
+######## Sector B Demand Curve:  
+
+# Current emissions are 200 - use quantities from 0 to 200 by 10
+quantity_b <- seq(0,200,by=10)
+
+# Write function for demand curve for Sector B
+
+d_b <- function(q){
+  (c1_b*(200-q) + c2_b*((200-q)^2) + c3_b*((200-q)^3) + int_b)
+}
+
+# Graph it 
+curve(d_b, from=0, to=200, xlab = "x", ylab = "y")
+
+# Plug in quantities into function to check
+demand_b <- d_b(quantity_b)
+```
+
+
+
+*Demand Curves*  
+
+Sector A:  $Price~of~Emissions = `r slope_a`*(180-q) + `r int_a`$  
+ - Willingness to Pay for First Unit = \$95.2    
+
+Sector B:  
 
 ###3. Country X
 
