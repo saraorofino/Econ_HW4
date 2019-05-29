@@ -1,0 +1,131 @@
+---
+title: "Technical Appendix"
+author: "Ilayda Dinc & Sara Orofino"
+date: "5/28/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+# Packages and data
+
+library(tidyverse)
+library(janitor)
+
+carbon <- read_csv("HW4Data.csv") %>% 
+  clean_names()
+
+```
+
+###1. Marginal Cost of Abatement by Sector 
+
+####Sector A
+
+```{r, include=FALSE, message=FALSE}
+
+
+
+```
+
+
+####Sector B
+
+```{r, include=FALSE, message=FALSE}
+
+
+
+```
+
+
+####Sector C
+
+```{r, include=FALSE, message=FALSE}
+
+
+
+```
+
+
+
+####Sector D
+
+```{r, include=FALSE, message=FALSE}
+
+
+
+```
+
+###2. Demand for Carbon Emissions 
+
+
+
+###3. Country X
+
+Suppose to meet the Paris Accord commitments, Country X (which contains sectors A, B, and C) needs to cut all carbon emissions in half. For each policy option derive the following:  
+1. The total cost of meeting the target in Country X  
+2. The cost (or benefit) to each sector  
+3. The tax revenue generated  
+
+####a. Cap on Carbon  
+
+
+
+
+1. Total Cost of Carbon Cap   
+
+2. Cost/Benefits to each Sector  
+
+3. Tax Revenue  
+
+####b. Tax on Carbon 
+
+
+
+1. Total Cost of Carbon Cap     
+
+2. Cost/Benefits to each Sector    
+
+3. Tax Revenue    
+
+
+####c. Cap and Trade  
+
+
+
+
+1. Total Cost of Carbon Cap     
+
+2. Cost/Benefits to each Sector    
+
+3. Tax Revenue    
+
+
+
+###4. Country Y
+
+Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.   
+
+Incentives for Country Y to enter the carbon market:  
+
+
+Incentives for Country X to attract Country Y to the carbon market:  
+
+
+###5. Local Air Pollution  
+
+Now assume every ton of carbon emissions creates one ton of local air pollution. Local air pollution only causes economic damages in the country where it is emitted. Neither Country X nor Country Y have local air pollution regulations.  
+
+####a. Carbon Cap and Trade Market only Covering Country X  
+
+How much local air pollution would you expect in Country X and Country Y?  
+
+
+
+####b. Country Y enters the Carbon Market of Country X  
+
+How much local air pollution would you expect in Country X and Country Y?  
+
+
+
+
+####c. Advice on International Trade of Carbon Emission Credits  
+
