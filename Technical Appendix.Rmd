@@ -56,9 +56,9 @@ trial_b <- ggplot(carbon, aes(x=abatement, y=mc_b)) +
 
 trial_b
 
-# looks polynomial ...
+.
 
-# Try fitting polynomial regression
+# Try fitting linear regression
 
 b_lm <- lm(mc_b ~ abatement, data = carbon)
 
@@ -91,6 +91,8 @@ trial_c
 
 # Looks exponential (check lab 4 from 244 if you have to use nls)
 
+# mutate a new column of exp(Abatement) than lm(Price~exp(abatement)), you will end up y= b0+ b1*exp(x)
+
 
 ```
 
@@ -105,9 +107,29 @@ trial_d <- ggplot(carbon, aes(x=abatement, y=mc_d)) +
   geom_smooth()
 
 trial_d
-# ????
+
+# Trying quadratic
+
+d_lm <- lm(mc_b ~ abatement+I(abatement^2), data = carbon)
+
+int_d <- d_lm$coefficients[1]
+c1_d <- d_lm$coefficients[2]
+c2_d <- d_lm$coefficients[3]
+
+
+d_lm_graph <- ggplot(carbon, aes(x=abatement, y=mc_d)) +
+  geom_point() + 
+  geom_smooth(method = "lm", formula = y~x+I(x^2))
+
+d_lm_graph
+
+# quadratic looks good to me
+
+
 
 ```
+
+$Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d*q^2` +`r int_b`$
 
 ###2. Demand for Carbon Emissions 
 
@@ -141,7 +163,7 @@ quantity_b <- seq(0,200,by=10)
 # Write function for demand curve for Sector B
 
 d_b <- function(q){
-  (c1_b*(200-q) + c2_b*((200-q)^2) + c3_b*((200-q)^3) + int_b)
+  (slope_b*(200-q) + int_b)
 }
 
 # Graph it 
@@ -159,6 +181,17 @@ Sector A:  $Price~of~Emissions = `r slope_a`*(180-q) + `r int_a`$
  - Willingness to Pay for First Unit = \$95.2    
 
 Sector B:  
+
+$Price~of~Emissions = `r slope_b`*(200-q) + `r int_b`$  
+
+- Willingness to Pay for First Unit = \$49.12 
+
+Sector C:
+
+
+Sector D:
+
+
 
 ###3. Country X
 
