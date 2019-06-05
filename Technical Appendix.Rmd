@@ -209,9 +209,11 @@ demand_c <- d_c(quantity_c)
 
 
 ######## Sector D Demand Curve:  
+quantity_d <- seq(0,300, by=10)
 
-
-
+d_d <- function(q){
+  (slope_d*(300-q) + int_lineard)
+}
 
 
 ```
@@ -239,10 +241,13 @@ Sector D:
 
 $Price~of~Emissions = `r c1_d`*(300-q) + `r c2_d`*(300-q)^2 +`r int_d``$  
 
-- Willingness to Pay for First Unit = \$185.46
+- Willingness to Pay for First Unit = \$185.46  
 
-- if you do linear, wtp: \$87.69
+$Price~of~Emissions = `r slope_d`*(300-q) +`r int_lineard``$   
 
+- Willingness to Pay with Linear Function: \$87.69    
+
+Note: The rest of the anlaysis will use the linear demand equations for each sector.    
 
 ###3. Country X
 
@@ -253,17 +258,74 @@ Suppose to meet the Paris Accord commitments, Country X (which contains sectors 
 
 ####a. Cap on Carbon  
 
+```{r}
+
+# Each sector cuts emissions by 100 - abates 100 
+################# Part 1 Write abatement curve functions for each sector and plug in 100 for Q
+
+#### Abatement function Sector A
+
+abate_a <- function(q){
+  (slope_a*q) + int_a
+}
+
+costa_100 <- abate_a(100) 
+
+#### Abatement function Sector B
+
+abate_b <- function(q){
+  (slope_b*q) + int_b
+}
+
+costb_100 <- abate_b(100)
+
+#### Abatement function Sector C
+
+abate_c <- function(q){
+  (slope_c*q) + int_c
+}
+
+costc_100 <- abate_c(100)
+
+#### Abatement function Sector D - NOT used in this question
+
+abate_d <- function(q){
+  (slope_d*q) + int_lineard
+}
+
+################## Part 2 Integrate to find the area under the curve (the cost of abatement from 0-100)
+
+areaa_100 <- integrate(abate_a, lower = 0, upper = 100)$value
+
+areab_100 <- integrate(abate_b, lower = 0, upper = 100)$value
+
+areac_100 <- integrate(abate_c, lower = 0, upper = 100)$value
+
+################## Part 3 Add all areas together to find the total cost of abating 100 units from each sector
+
+totalcost_100 <- areaa_100 + areab_100 + areac_100
+```
 
 
 
 1. Total Cost of Carbon Cap   
+$Total~Cost = `r round(totalcost_100, digits=6)`$   
 
-2. Cost/Benefits to each Sector  
+2. Cost/Benefits to each Sector    
+$Cost~to~Sector~A = `r round(areaa_100, digits=6)`$    
+
+$Cost~to~Sector~B = `r round(areab_100, digits=6)`$    
+
+$Cost~to~Sector~C = `r round(areac_100, digits=6)`$    
 
 3. Tax Revenue  
+There is no tax revenue with a carbon cap  
 
 ####b. Tax on Carbon 
 
+```{r}
+
+```
 
 
 1. Total Cost of Carbon Cap     
