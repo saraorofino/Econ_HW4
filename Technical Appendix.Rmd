@@ -309,7 +309,7 @@ areac_100 <- integrate(abate_c, lower = 0, upper = 100)$value
 totalcost_100 <- areaa_100 + areab_100 + areac_100
 ```
 
-Marginal cost of abatement curve is used to calculate the total cost of abating by 100 tons for each sector.
+Marginal cost of abatement curves for each sector are used to calculate the total cost of abating by 100 tons. The area underneath the marginal cost of abatement curve from 0 to 100 gives the total cost of abatement for that sector. The total cost of carbon cap is the sum of the costs of three sectors.
 
 1. Total Cost of Carbon Cap   
 $Total~Cost = `r round(totalcost_100, digits=6)`$   
