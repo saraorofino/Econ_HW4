@@ -453,9 +453,18 @@ There is no tax revenue with a cap and trade.
 
 ###4. Country Y
 
-Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.   
+Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.     
 
-Sector D's marginal cost of abatement curve is flipped and put on the same graph with the aggregate marginal cost curve for country X. Before the equilibrium point, it is cheaper for Country Y to abate, then country X. So, at a price between Country X and Country Y's cost, both of the countries are better off.
+Sector D's marginal cost of abatement curve is flipped and put on the same graph with the aggregate marginal cost curve for country X. Before the equilibrium point, it is cheaper for Country Y to abate, then country X. So, at a price between Country X and Country Y's cost, both of the countries are better off.  
+
+
+```{r include = FALSE}
+
+# Find the intersection of the demand curve for Sector D and the aggregate abatement curve for country x 
+
+q_intersect <- (int_lineard - (agg_intq_all/agg_slopeq_all))/((1/agg_slopeq_all) - slope_d)
+```
+
 
 Incentives for Country Y to enter the carbon market:  
 
