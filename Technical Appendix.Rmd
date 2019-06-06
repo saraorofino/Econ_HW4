@@ -145,8 +145,9 @@ slope_d <- linear_d$coefficients[2]
 
 
 ```
+For linear fit: $Marginal~Cost~Abatement~Sector~D = `r slope_d`*q +`r int_lineard`$
 
-$Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d`*q^2 +`r int_d`$
+For quadratic fit: $Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d`*q^2 +`r int_d`$
 
 ###2. Demand for Carbon Emissions 
 
@@ -239,11 +240,11 @@ $Price~of~Emissions = `r slope_c`*(220-q) + `r int_c`$
 
 Sector D:
 
-$Price~of~Emissions = `r c1_d`*(300-q) + `r c2_d`*(300-q)^2 +`r int_d``$  
+$Price~of~Emissions = `r c1_d`*(300-q) + `r c2_d`*(300-q)^2 +`r int_d`$  
 
 - Willingness to Pay for First Unit = \$185.46  
 
-$Price~of~Emissions = `r slope_d`*(300-q) +`r int_lineard``$   
+$Price~of~Emissions = `r slope_d`*(300-q) +`r int_lineard`$   
 
 - Willingness to Pay with Linear Function: \$87.69    
 
