@@ -386,14 +386,20 @@ Now assume every ton of carbon emissions creates one ton of local air pollution.
 
 How much local air pollution would you expect in Country X and Country Y?  
 
+- If Cap and Trade is only covering country X, country X will be emitting 300 tons of carbon emissions and that will result in 300 tons of local air pollution.
+
+- Since there is no cap and trade in country Y, they will continue to emit at the same level as their current emissions which is 300 tons of carbon, and that will result in 300 tons of air pollution.
 
 
 ####b. Country Y enters the Carbon Market of Country X  
 
 How much local air pollution would you expect in Country X and Country Y?  
 
+From the previous question, if country Y enters the carbon market, Country X will be emitting, so the amount of air pollution will be ...
 
+Since the Country Y will be abating XX more, they will be emitting XX tons of carbon, and that will result in XX tons of air pollution.
 
 
 ####c. Advice on International Trade of Carbon Emission Credits  
 
+Allowing international trade of carbon emissions is economically efficient but the local impacts of carbon emissions is not captured by this model. If Country Y enters to the market, Country X will be emitting more carbon which will cause a lot of local air pollution.
