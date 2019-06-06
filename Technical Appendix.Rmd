@@ -18,6 +18,8 @@ carbon <- read_csv("HW4Data.csv") %>%
 
 ###1. Marginal Cost of Abatement by Sector 
 
+Using the data provided, regression analysis is conducted to find the marginal cost of abatement curve for 4 different sectors.
+
 ####Sector A
 
 ```{r, include=FALSE, message=FALSE}
@@ -221,7 +223,7 @@ d_d <- function(q){
 
 *Demand Curves*  
 
-Plugging in O for q will result in the willingness to pay for the right to pollute the first unit.
+Demand curve for carbon emissions is found for each sector by pluging in (Current Emission-q) for q in the marginal cost of abatement equation. The cost of abatement of quantity q is equal to willingness to pay for emitting (Current Emission-q). Plugging in O for q will result in the willingness to pay for the right to pollute the first unit.
 
 Sector A:  $Price~of~Emissions = `r slope_a`*(180-q) + `r int_a`$  
  - Willingness to Pay for First Unit = \$95.2    
@@ -240,13 +242,13 @@ $Price~of~Emissions = `r slope_c`*(220-q) + `r int_c`$
 
 Sector D:
 
+$Price~of~Emissions = `r slope_d`*(300-q) +`r int_lineard`$   
+
+- Willingness to Pay with Linear Function: \$87.69 
+
 $Price~of~Emissions = `r c1_d`*(300-q) + `r c2_d`*(300-q)^2 +`r int_d`$  
 
 - Willingness to Pay for First Unit = \$185.46  
-
-$Price~of~Emissions = `r slope_d`*(300-q) +`r int_lineard`$   
-
-- Willingness to Pay with Linear Function: \$87.69    
 
 Note: The rest of the anlaysis will use the linear demand equations for each sector.    
 
@@ -259,7 +261,7 @@ Suppose to meet the Paris Accord commitments, Country X (which contains sectors 
 
 ####a. Cap on Carbon  
 
-```{r}
+```{r include=FALSE}
 
 # Each sector cuts emissions by 100 - abates 100 
 ################# Part 1 Write abatement curve functions for each sector and plug in 100 for Q
@@ -307,7 +309,7 @@ areac_100 <- integrate(abate_c, lower = 0, upper = 100)$value
 totalcost_100 <- areaa_100 + areab_100 + areac_100
 ```
 
-
+Marginal cost of abatement curve is used to calculate the total cost of abating by 100 tons for each sector.
 
 1. Total Cost of Carbon Cap   
 $Total~Cost = `r round(totalcost_100, digits=6)`$   
@@ -320,24 +322,34 @@ $Cost~to~Sector~B = `r round(areab_100, digits=6)`$
 $Cost~to~Sector~C = `r round(areac_100, digits=6)`$    
 
 3. Tax Revenue  
-There is no tax revenue with a carbon cap  
+
+There is no tax revenue with a carbon cap.
 
 ####b. Tax on Carbon 
 
-```{r}
+```{r include= FALSE}
+
+#Find the aggregate marginal cost curve
+
 
 ```
 
+To find the tax that accomplishes the desired reduction of 300, aggreagate marginal cost curve for 3 sectors in Country X is found. Marginal cost of 300th unit on the aggregate marginal cost curve is equal to the tax required.
 
 1. Total Cost of Carbon Cap     
 
+The total cost of the carbon cap is the area under the aggregate cost curve from 0 to 300.
+
 2. Cost/Benefits to each Sector    
+
+Plugging in the marginal cost of abatement(the tax in the case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector.
 
 3. Tax Revenue    
 
+Tax revenue is calculated by multiplying the total emissions by the amount of tax. Total emissions is found by subtracting the amount of abatement from the total initial emissions of 600 tons.
+
 
 ####c. Cap and Trade  
-
 
 
 
