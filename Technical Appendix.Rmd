@@ -351,19 +351,26 @@ Tax revenue is calculated by multiplying the total emissions by the amount of ta
 
 ####c. Cap and Trade  
 
-
+Even though they are initially allocated current emissions minus 100, cap and trade will satisfy the equal marginal principle and the total reduction of 300 will be distributed between the three sectors just like in the part b. The marginal cost of abatement will be equal for all sectors which is equal to the marginal cost of abatement of 300th unit on the aggregate cost curve.
 
 1. Total Cost of Carbon Cap     
 
-2. Cost/Benefits to each Sector    
+The total cost of the cap and trade is the area under the aggregate cost curve from 0 to 300.
+
+2. Cost/Benefits to each Sector  
+
+The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector.
 
 3. Tax Revenue    
 
+There is no tax revenue with a cap and trade
 
 
 ###4. Country Y
 
 Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.   
+
+Sector D's marginal cost of abatement curve is flipped and put on the same graph with the aggregate marginal cost curve for country X. Before the equilibrium point, it is cheaper for Country Y to abate, then country X. So, at a price between Country X and Country Y's cost, both of the countries are better off.
 
 Incentives for Country Y to enter the carbon market:  
 
