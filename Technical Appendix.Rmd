@@ -149,26 +149,28 @@ For linear fit: $Marginal~Cost~Abatement~Sector~D = `r slope_d`*q +`r int_linear
 Quadratic fit for Sector D's marginal abatement cost is found to be:
 $Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d`*q^2 +`r int_d`$
 
+\pagebreak
 The estimated marginal abatement cost functions in all four sectors are graphed below in Figure 1
 ```{r echo=FALSE, fig.width= 4.5, fig.height= 4.5}
 
 ###### Graph of all sectors
 
 all_sectors <- ggplot(carbon, aes(x=abatement)) +
-  geom_smooth(aes(y=mc_a), method = lm, se = FALSE, size = 0.5, color = "red") + 
-  geom_smooth(aes(y=mc_b), method = lm, se = FALSE, size = 0.5, color = "blue") +
-  geom_smooth(aes(y=mc_c), method = lm, se = FALSE, size = 0.5, color = "green") +
-  geom_smooth(aes(y=mc_d), method = lm, se = FALSE, size = 0.5, color = "purple") +
+  geom_smooth(aes(y=mc_a, color = "red"), method = lm, se = FALSE, size = 0.5) + 
+  geom_smooth(aes(y=mc_b, color = "blue"), method = lm, se = FALSE, size = 0.5) +
+  geom_smooth(aes(y=mc_c, color = "green"), method = lm, se = FALSE, size = 0.5) +
+  geom_smooth(aes(y=mc_d, color = "purple"), method = lm, se = FALSE, size = 0.5) +
   theme_classic()+
   labs(x ="Abatement (tons)",
        y ="Price($/ton)")+
   scale_x_continuous(expand = c(0,0))+
-  theme(text=element_text(size=12,family="Times New Roman"))
+  theme(text=element_text(size=12,family="Times"), legend.title = element_blank()) + 
+  scale_color_manual(values = c("red", "blue", "green", "purple"), label = c("Sector A", "Sector B", "Sector C", "Sector D"))
   
 
 all_sectors
 
-# I can't find a way to add legend
+
 
 ```
 
@@ -432,18 +434,20 @@ $Optimal~Carbon~Tax = `r round(optimal_tax, digits=2)`$
 
 1. Total Cost of Carbon Tax    
 
-The total abatement cost is the area under the aggregate cost curve from 0 to 300.each sector also pays tax for their emissions, so the amount paid for tax is added to the total abatement cost.
+The total abatement cost is the area under the aggregate cost curve from 0 to 300. 
 
 $Total~Abatement~Cost~of~Carbon~Tax = `r round(costagg_tax_abatement, digits=2)`$  
-
-Each sector also pays tax for their emissions, so the amount paid for tax is added to the total abatement cost. The cost of meeting the target with carbon tax is calculated as:
+ 
+   
+Each sector also pays tax for their emissions, so the amount paid for tax is added to the total abatement cost. The total cost of meeting the target with carbon tax is calculated as:
 
 $Total~Cost~Carbon~Tax = `r round(costagg_tax, digits=2)`$  
 
 
+
 2. Cost/Benefits to each Sector    
 
-Plugging in the marginal cost of abatement(the tax in the case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector. Each sector also pays tax for their emissions, so the amount of tax each sector pays is added to their total cost.
+Plugging in the marginal cost of abatement(the tax in this case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector. Each sector also pays tax for their emissions, so the amount of tax each sector pays is added to their total cost.
 
 
 $Cost~to~Sector~A = `r round(costa_tax, digits=2)`$        
@@ -569,7 +573,7 @@ The total cost of entering the market is negative for Country Y. It is cheaper f
 
 Incentives for Country X to attract Country Y to the carbon market:  
 
-The total cost of cap and trade for Country X gets cheaper as Country Y enters the market. (It was $`r round(costagg_cap, digits=2)` for the cap and trade in only Country X) Sector D can reduce their emission cheaper than the sectors in Country X. So, they are going to pay less to Country Y than whatever that would normally cost to them to reduce.
+The total cost of cap and trade for Country X gets cheaper as Country Y enters the market. (It was $`r round(costagg_cap, digits=2)` for the cap and trade in only Country X). Sector D can reduce their emission cheaper than the sectors in Country X. So, sectors in Country X will pay less to Country Y than the price it would normally cost to them to reduce emissions.
 
 
 ###5. Local Air Pollution  
@@ -580,9 +584,9 @@ Now assume every ton of carbon emissions creates one ton of local air pollution.
 
 How much local air pollution would you expect in Country X and Country Y?  
 
-- If Cap and Trade is only covering country X, country X will be emitting 300 tons of carbon emissions and that will result in 300 tons of local air pollution.
+- If Cap and Trade is only covering Country X, Country X will be emitting 300 tons of carbon emissions and that will result in 300 tons of local air pollution.
 
-- Since there is no cap and trade in country Y, they will continue to emit at the same level as their current emissions which is 300 tons of carbon, and that will result in 300 tons of air pollution.
+- Since there is no cap and trade in Country Y, they will continue to emit at the same level as their current emissions which is 300 tons of carbon, and that will result in 300 tons of air pollution.
 
 
 ####b. Country Y enters the Carbon Market of Country X  
@@ -593,13 +597,13 @@ How much local air pollution would you expect in Country X and Country Y?
 total_emission_x <- 300+q_xy_d
 ```
 
-From the previous question, the abatement of country Y is calculated as `r round(q_xy_d, digits=2)`, if it enters the carbon market. So, Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be `r round(total_emission_x, digits=2)`.
+From the previous question, the abatement of Country Y is calculated as `r round(q_xy_d, digits=2)`, if it enters the carbon market. Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be `r round(total_emission_x, digits=2)`.
 
 ```{r include=FALSE}
 total_emission_y <- 300-q_xy_d
 ```
 
-Since the Country Y will be abating their current emissions of 300 tons by `r round(q_xy_d, digits=2)`, they will be emitting `r round(total_emission_y, digits=2)` tons of carbon, and that will result in `r round(total_emission_y, digits=2)` tons of air pollution.
+Since Country Y will be abating their current emissions of 300 tons by `r round(q_xy_d, digits=2)`, they will be emitting `r round(total_emission_y, digits=2)` tons of carbon, resulting in `r round(total_emission_y, digits=2)` tons of air pollution.
 
 
 ####c. Advice on International Trade of Carbon Emission Credits  
