@@ -10,6 +10,12 @@ output: pdf_document
 
 library(tidyverse)
 library(janitor)
+library(ggplot2)
+library(knitr)
+library(ggrepel)
+library(ggpubr)
+library(gridExtra)
+library(extrafont)
 
 carbon <- read_csv("HW4Data.csv") %>% 
   clean_names()
@@ -18,7 +24,7 @@ carbon <- read_csv("HW4Data.csv") %>%
 
 ###1. Marginal Cost of Abatement by Sector 
 
-Using the data provided, regression analysis is conducted to find the marginal cost of abatement curve for 4 different sectors.
+Using the data provided, regression analysis is conducted to find the marginal cost of abatement curve for 4 different sectors. For the ease of later calculations, linear models are used for each sector. However, there might be better fitting functional forms. For example, for Sector C exponential function might fit better, and for Sector D quadratic function might fit better.
 
 ####Sector A
 
@@ -97,14 +103,6 @@ int_c <- c_lm$coefficients[1]
 slope_c <- c_lm$coefficients[2]
 
 
-
-# Looks exponential (check lab 4 from 244 if you have to use nls)
-
-# mutate a new column of exp(Abatement) than lm(Price~exp(abatement)), you will end up y= b0+ b1*exp(x)
-
-# sam used linear for all, he said it is gonna be easier for the later parts
-
-
 ```
 
 $Marginal~Cost~Abatement~Sector~C = `r slope_c`*q + `r int_c`$
@@ -144,19 +142,36 @@ int_lineard <- linear_d$coefficients[1]
 slope_d <- linear_d$coefficients[2]
 
 
-###### Graph of all sectors
 
-all_sectors <- ggplot(carbon, aes(x=abatement)) +
-  geom_smooth(aes(y=mc_a), method = lm, se = TRUE, size = 0.5, color = "red") + 
-  geom_smooth(aes(y=mc_b), method = lm, se = TRUE, size = 0.5, color = "blue") +
-  geom_smooth(aes(y=mc_c), method = lm, se = TRUE, size = 0.5, color = "green") +
-  geom_smooth(aes(y=mc_d), method = lm, se = TRUE, size = 0.5, color = "purple") 
-
-all_sectors
 ```
 For linear fit: $Marginal~Cost~Abatement~Sector~D = `r slope_d`*q +`r int_lineard`$
 
-For quadratic fit: $Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d`*q^2 +`r int_d`$
+Quadratic fit for Sector D's marginal abatement cost is found to be:
+$Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d`*q^2 +`r int_d`$
+
+The estimated marginal abatement cost functions in all four sectors are graphed below in Figure 1
+```{r echo=FALSE }
+
+###### Graph of all sectors
+
+all_sectors <- ggplot(carbon, aes(x=abatement)) +
+  geom_smooth(aes(y=mc_a), method = lm, se = FALSE, size = 0.5, color = "red") + 
+  geom_smooth(aes(y=mc_b), method = lm, se = FALSE, size = 0.5, color = "blue") +
+  geom_smooth(aes(y=mc_c), method = lm, se = FALSE, size = 0.5, color = "green") +
+  geom_smooth(aes(y=mc_d), method = lm, se = FALSE, size = 0.5, color = "purple") +
+  theme_classic()+
+  labs(x ="Abatement (tons)",
+       y ="Price($/ton)")+
+  scale_x_continuous(expand = c(0,0))+
+  theme(text=element_text(size=12,family="Times New Roman"))
+  
+
+all_sectors
+
+# I can't find a way to add legend
+
+```
+*Figure 1:* Marginal Abatement Cost Funtions of Four Sectors
 
 ###2. Demand for Carbon Emissions 
 
@@ -230,7 +245,9 @@ d_d <- function(q){
 
 *Demand Curves*  
 
-Demand curve for carbon emissions is found for each sector by pluging in (Current Emission-q) for q in the marginal cost of abatement equation. The cost of abatement of quantity q is equal to willingness to pay for emitting (Current Emission-q). Plugging in O for q will result in the willingness to pay for the right to pollute the first unit.
+Demand curve for carbon emissions is found for each sector by pluging in (Current Emission-q) for q in the marginal cost of abatement equation. The cost of abatement of quantity q is equal to willingness to pay for emitting (Current Emission-q). 
+
+In the new equation (demand curve), q will represent the amount of emissions. Plugging in O for q will result in the willingness to pay for the right to emit the first unit.
 
 Sector A:  $Price~of~Emissions = `r slope_a`*(180-q) + `r int_a`$  
  - Willingness to Pay for First Unit = \$95.2    
@@ -257,14 +274,11 @@ $Price~of~Emissions = `r c1_d`*(300-q) + `r c2_d`*(300-q)^2 +`r int_d`$
 
 - Willingness to Pay for First Unit = \$185.46  
 
-Note: The rest of the anlaysis will use the linear demand equations for each sector.    
+Note: The rest of the anlaysis will use the linear demand equations for each sector. But it is important to note that different functional forms result in different predictions for willingness to pay.   
 
 ###3. Country X
 
-Suppose to meet the Paris Accord commitments, Country X (which contains sectors A, B, and C) needs to cut all carbon emissions in half. For each policy option derive the following:  
-1. The total cost of meeting the target in Country X  
-2. The cost (or benefit) to each sector  
-3. The tax revenue generated  
+Suppose to meet the Paris Accord commitments, Country X (which contains sectors A, B, and C) needs to cut all carbon emissions in half.
 
 ####a. Cap on Carbon  
 
@@ -316,7 +330,7 @@ areac_100 <- integrate(abate_c, lower = 0, upper = 100)$value
 totalcost_100 <- areaa_100 + areab_100 + areac_100
 ```
 
-Marginal cost of abatement curves for each sector are used to calculate the total cost of abating by 100 tons. The area underneath the marginal cost of abatement curve from 0 to 100 gives the total cost of abatement for that sector. The total cost of carbon cap is the sum of the costs of three sectors.
+Marginal cost of abatement curves for each sector are used to calculate the total cost of abating by 100 tons. The area underneath the marginal cost of abatement curve from 0 to 100 gives the total cost of abatement for that sector. The arees are calculated by integration and the total cost of carbon cap is the sum of the costs of three sectors.
 
 1. Total Cost of Carbon Cap     
 
@@ -399,6 +413,8 @@ qtax_c <- qc_abate(optimal_tax) # abates 65.2
 costc_tax <- integrate(abate_c, lower = 0, upper = qtax_c)$value + ((220-65.2)*optimal_tax)
 
 # Aggregated cost #abates 300, emits 300
+costagg_tax_abatement<-integrate(abate_c, lower = 0, upper = qtax_c)$value+ integrate(abate_b, lower = 0, upper = qtax_b)$value+  integrate(abate_a, lower = 0, upper = qtax_a)$value
+
 costagg_tax <- costa_tax+costb_tax+ costc_tax
   
 #integrate(agg_abate, lower = 0, upper = 300)$value+ (300*optimal_tax)
@@ -408,22 +424,24 @@ tax_rev <- optimal_tax*300
 
 ```
 
-To find the tax that accomplishes the desired reduction of 300, aggreagate marginal cost curve for 3 sectors in Country X is found. Marginal cost of 300th unit on the aggregate marginal cost curve is equal to the tax required.
+To find the tax that accomplishes the desired reduction of 300, aggreagate marginal cost curve for 3 sectors in Country X is found. to find the aggregate cost, the marginal costs equations of 3 sectors are horizontally added. Marginal cost of 300th unit on the aggregate marginal cost curve is equal to the tax required.
 
 $Optimal~Carbon~Tax = `r round(optimal_tax, digits=2)`$ 
 
 1. Total Cost of Carbon Tax    
 
-The total cost of the carbon tax is the area under the aggregate cost curve from 0 to 300. 
+The total abatement cost is the area under the aggregate cost curve from 0 to 300.each sector also pays tax for their emissions, so the amount paid for tax is added to the total abatement cost.
 
+$Total~Abatement~Cost~of~Carbon~Tax = `r round(costagg_tax_abatement, digits=2)`$  
 
+Each sector also pays tax for their emissions, so the amount paid for tax is added to the total abatement cost. The cost of meeting the target with carbon tax is calculated as:
 
 $Total~Cost~Carbon~Tax = `r round(costagg_tax, digits=2)`$  
 
 
 2. Cost/Benefits to each Sector    
 
-Plugging in the marginal cost of abatement(the tax in the case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector.  
+Plugging in the marginal cost of abatement(the tax in the case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector. Each sector also pays tax for their emissions, so the amount of tax each sector pays is added to their total cost.
 
 
 $Cost~to~Sector~A = `r round(costa_tax, digits=2)`$        
@@ -446,7 +464,7 @@ Even though they are initially allocated current emissions minus 100, cap and tr
 
 1. Total Cost of Carbon Cap and Trade     
 
-The total cost of the cap and trade is the area under the aggregate cost curve from 0 to 300.
+The total cost of the cap and trade is the area under the aggregate cost curve from 0 to 300. The trades between sectors cancel each other.
 ```{r include=FALSE}
 # Sector A 
 #abates 83.3 , buys 16.7 from Sector B
@@ -464,14 +482,12 @@ costc_cap <- integrate(abate_c, lower = 0, upper = qtax_c)$value + (34.8*optimal
 
 costagg_cap<-costa_cap+costb_cap+costc_cap
 
-#costagg_cap <- integrate(agg_abate, lower = 0, upper = 300)$value
 ```
 $Total~Cost~Cap~and~Trade = `r round(costagg_cap, digits=2)`$  
 
 2. Cost/Benefits to each Sector  
 
-Each sector is allocated their current emissions minus 100 tons. The outcome of trading will be the same as if the carbon tax was imposed so the cost of abating is equal to the area under the marginal abatement curve from 0 to the quantity abated. 
-
+Firstly, The areas underneath the marginal cost curves for each sector from 0 to the quantity abated are calculated to find total cost of abatement for each sector. Then, depending on the trade, the quantity traded times the price is added (if bought) or subtracted (if sold) to find the total cost of Cap and Trade to each sector.
 
 
 $Cost~to~Sector~A = `r round(costa_cap, digits=2)`$      
@@ -489,8 +505,6 @@ There is no tax revenue with a cap and trade.
 ###4. Country Y
 
 Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.     
-
-
 
 
 ```{r include = FALSE}
@@ -534,6 +548,7 @@ costd_xy <- integrate(abate_d, lower = 0, upper = qxy_d)$value - (77.4*cost_xy)
 
 costagg_xy<-costa_xy+costb_xy+costc_xy+costd_xy
 
+costagg_xy_tox<-costa_xy+costb_xy+costc_xy
 #kink3_q <- agg_intq_all + (agg_slopeq_all*int_lineard)
 
 
@@ -541,12 +556,18 @@ costagg_xy<-costa_xy+costb_xy+costc_xy+costd_xy
 
 ```
 
-Sector D is also added to the aggregate marginal cost curve and abatement quantity of 300 is plugged into the equation. That will result in the marginal cost of `r round(cost_xy, digits=2)`  which is less than the marginal cost of abatement for Country X only ( `r round(optimal_tax, digits=2)` ). Then the total cost of abatement of 300 is calculated to be `r round(costagg_xy, digits=2)`.
+Sector D is also added to the aggregate marginal cost curve and abatement quantity of 300 is plugged into the equation. That will result in the marginal cost of `r round(cost_xy, digits=2)`  which is less than the marginal cost of abatement for Country X only ( `r round(optimal_tax, digits=2)` ). Then the total cost of abatement of 300 is calculated to be `r round(costagg_xy, digits=2)` by adding up costs to each sector.
+
+Also, total cost of international cap and trade to Country X is calculated as $`r round(costagg_xy_tox, digits=2)`, whereas total cost to Country Y is `r round(costd_xy, digits=2)`.
 
 Incentives for Country Y to enter the carbon market:  
 
+The total cost of entering the market is negative for Country Y. It is cheaper for Sector D to reduce their emissions and the sectors in country X are willing to pay more than the cost of sector D.
+
 
 Incentives for Country X to attract Country Y to the carbon market:  
+
+The total cost of cap and trade for Country X gets cheaper as Country Y enters the market. (It was $`r round(costagg_cap, digits=2)` for the cap and trade in only Country X) Sector D can reduce their emission cheaper than the sectors in Country X. So, they are going to pay less to Country Y than whatever that would normally cost to them to reduce.
 
 
 ###5. Local Air Pollution  
@@ -570,15 +591,15 @@ How much local air pollution would you expect in Country X and Country Y?
 total_emission_x <- 300+q_xy_d
 ```
 
-From the previous question, if country Y enters the carbon market, Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be $ `r round(total_emission_x, digits=2)`
+From the previous question, the abatement of country Y is calculated as `r round(q_xy_d, digits=2)`, if it enters the carbon market. So, Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be $ `r round(total_emission_x, digits=2)`
 
 ```{r include=FALSE}
 total_emission_y <- 300-q_xy_d
 ```
 
-Since the Country Y will be abating `r round(q_xy_d, digits=2)`  more, they will be emitting `r round(total_emission_y, digits=2)` tons of carbon, and that will result in `r round(total_emission_y, digits=2)` tons of air pollution.
+Since the Country Y will be abating their current emissions of 300 tons by `r round(q_xy_d, digits=2)`, they will be emitting `r round(total_emission_y, digits=2)` tons of carbon, and that will result in `r round(total_emission_y, digits=2)` tons of air pollution.
 
 
 ####c. Advice on International Trade of Carbon Emission Credits  
 
-Allowing international trade of carbon emissions is economically efficient but the local impacts of carbon emissions is not captured by this model. If Country Y enters to the market, Country X will be emitting more carbon which will cause a lot of local air pollution.
+Allowing international trade of carbon emissions is economically efficient for both countries but the local impacts of carbon emissions is not captured by this model. If Country Y enters to the market, Country X will be emitting more carbon which will cause a lot of local air pollution.
