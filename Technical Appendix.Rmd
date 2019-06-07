@@ -144,8 +144,15 @@ int_lineard <- linear_d$coefficients[1]
 slope_d <- linear_d$coefficients[2]
 
 
+###### Graph of all sectors
 
+all_sectors <- ggplot(carbon, aes(x=abatement)) +
+  geom_smooth(aes(y=mc_a), method = lm, se = TRUE, size = 0.5, color = "red") + 
+  geom_smooth(aes(y=mc_b), method = lm, se = TRUE, size = 0.5, color = "blue") +
+  geom_smooth(aes(y=mc_c), method = lm, se = TRUE, size = 0.5, color = "green") +
+  geom_smooth(aes(y=mc_d), method = lm, se = TRUE, size = 0.5, color = "purple") 
 
+all_sectors
 ```
 For linear fit: $Marginal~Cost~Abatement~Sector~D = `r slope_d`*q +`r int_lineard`$
 
@@ -311,15 +318,17 @@ totalcost_100 <- areaa_100 + areab_100 + areac_100
 
 Marginal cost of abatement curves for each sector are used to calculate the total cost of abating by 100 tons. The area underneath the marginal cost of abatement curve from 0 to 100 gives the total cost of abatement for that sector. The total cost of carbon cap is the sum of the costs of three sectors.
 
-1. Total Cost of Carbon Cap   
-$Total~Cost = `r round(totalcost_100, digits=6)`$   
+1. Total Cost of Carbon Cap     
 
-2. Cost/Benefits to each Sector    
-$Cost~to~Sector~A = `r round(areaa_100, digits=6)`$    
+$Total~Cost = `r round(totalcost_100, digits=2)`$   
 
-$Cost~to~Sector~B = `r round(areab_100, digits=6)`$    
+2. Cost/Benefits to each Sector      
 
-$Cost~to~Sector~C = `r round(areac_100, digits=6)`$    
+$Cost~to~Sector~A = `r round(areaa_100, digits=2)`$    
+
+$Cost~to~Sector~B = `r round(areab_100, digits=2)`$    
+
+$Cost~to~Sector~C = `r round(areac_100, digits=2)`$    
 
 3. Tax Revenue  
 
@@ -329,48 +338,133 @@ There is no tax revenue with a carbon cap.
 
 ```{r include= FALSE}
 
-#Find the aggregate marginal cost curve
+### Switch slope and intercept of A to be in terms of q
+qint_a <- (-int_a/slope_a)
+qslope_a <- (1/slope_a)
+qa_abate <- function(p){qint_a + (qslope_a*p)}
 
+### Switch slope and intercept of B to be in terms of q
+qint_b <- (-int_b/slope_b)
+qslope_b <- (1/slope_b)
+qb_abate <- function(p){qint_b + (qslope_b*p)}
+
+### Switch slope and intercept of C to be in terms of q 
+qint_c <- (-int_c/slope_c)
+qslope_c <- (1/slope_c)
+qc_abate <- function(p){qint_c + (qslope_c*p)}
+
+##### Aggregate marginal cost of abatement curves: 
+# Sector C has lowest intercept - find the quantity where C and A intersect (Kink Point 1)
+kink1_q <- (int_a - int_c)/(slope_c - slope_a)
+# Sector A/C lines cross at q=14.5
+
+# From the graph above Sector C has the lowest intercept followed by sector A; aggregate these two first 
+agg_intq_ca <- qint_c + qint_a
+agg_slopeq_ca <- qslope_c + qslope_a
+
+# Kink point 2: where price = intercept B (9.32) plugged into the agg C/A curve
+kink2_q <- agg_intq_ca + (agg_slopeq_ca*int_b)
+# 300 abated will be the aggregate of all three curves since it's past the second kink point 
+
+# Aggregate B with the aggregated C/A
+agg_intq_all <- agg_intq_ca + qint_b
+agg_slopeq_all <- agg_slopeq_ca + qslope_b
+
+# Put in terms of price:
+agg_abate <- function(q){
+  ((1/agg_slopeq_all)*q) + (abs(agg_intq_all)/agg_slopeq_all)
+}
+
+# Plug in 300 to find the price of the tax 
+optimal_tax <- agg_abate(300)
+
+###### Find how much each sector abates and the cost using the optimal tax 
+
+# Sector A 
+qtax_a <- qa_abate(optimal_tax) #abates 83.3
+costa_tax <- integrate(abate_a, lower = 0, upper = qtax_a)$value
+
+# Sector B 
+qtax_b <- qb_abate(optimal_tax) #abates 151.5
+costb_tax <- integrate(abate_b, lower = 0, upper = qtax_b)$value
+
+# Sector C 
+qtax_c <- qc_abate(optimal_tax) # abates 65.2
+costc_tax <- integrate(abate_c, lower = 0, upper = qtax_c)$value
+
+# Aggregated cost
+costagg_tax <- integrate(agg_abate, lower = 0, upper = 300)$value
+
+####### Find Tax Revenue 
+tax_rev <- optimal_tax*300
 
 ```
 
 To find the tax that accomplishes the desired reduction of 300, aggreagate marginal cost curve for 3 sectors in Country X is found. Marginal cost of 300th unit on the aggregate marginal cost curve is equal to the tax required.
 
-1. Total Cost of Carbon Cap     
 
-The total cost of the carbon cap is the area under the aggregate cost curve from 0 to 300.
+1. Total Cost of Carbon Tax    
+
+The total cost of the carbon tax is the area under the aggregate cost curve from 0 to 300.  
+$Total~Cost~Carbon~Tax = `r round(costagg_tax, digits=2)`$  
+
 
 2. Cost/Benefits to each Sector    
 
-Plugging in the marginal cost of abatement(the tax in the case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector.
+Plugging in the marginal cost of abatement(the tax in the case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector.  
+
+$Cost~to~Sector~A = `r round(costa_tax, digits=2)`$      
+
+$Cost~to~Sector~B = `r round(costb_tax, digits=2)`$      
+
+$Cost~to~Sector~C = `r round(costc_tax, digits=2)`$    
 
 3. Tax Revenue    
 
 Tax revenue is calculated by multiplying the total emissions by the amount of tax. Total emissions is found by subtracting the amount of abatement from the total initial emissions of 600 tons.
 
+$Tax~Revenue = `r round(tax_rev, digits=5)`$    
 
 ####c. Cap and Trade  
 
+
 Even though they are initially allocated current emissions minus 100, cap and trade will satisfy the equal marginal principle and the total reduction of 300 will be distributed between the three sectors just like in the part b. The marginal cost of abatement will be equal for all sectors which is equal to the marginal cost of abatement of 300th unit on the aggregate cost curve.
 
-1. Total Cost of Carbon Cap     
+1. Total Cost of Carbon Cap and Trade     
 
 The total cost of the cap and trade is the area under the aggregate cost curve from 0 to 300.
 
+$Total~Cost~Cap~and~Trade = `r round(costagg_tax, digits=2)`$  
+
 2. Cost/Benefits to each Sector  
 
-The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector.
+Each sector is allocated their current emissions minus 100 tons. The outcome of trading will be the same as if the carbon tax was imposed so the cost of abating is equal to the area under the marginal abatement curve from 0 to the quantity abated.   
+
+$Cost~to~Sector~A = `r round(costa_tax, digits=2)`$        
+
+$Cost~to~Sector~B = `r round(costb_tax, digits=2)`$        
+
+$Cost~to~Sector~C = `r round(costc_tax, digits=2)`$     
 
 3. Tax Revenue    
 
-There is no tax revenue with a cap and trade
+There is no tax revenue with a cap and trade.  
 
 
 ###4. Country Y
 
-Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.   
+Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.     
 
-Sector D's marginal cost of abatement curve is flipped and put on the same graph with the aggregate marginal cost curve for country X. Before the equilibrium point, it is cheaper for Country Y to abate, then country X. So, at a price between Country X and Country Y's cost, both of the countries are better off.
+Sector D's marginal cost of abatement curve is flipped and put on the same graph with the aggregate marginal cost curve for country X. Before the equilibrium point, it is cheaper for Country Y to abate, then country X. So, at a price between Country X and Country Y's cost, both of the countries are better off.  
+
+
+```{r include = FALSE}
+
+# Find the intersection of the demand curve for Sector D and the aggregate abatement curve for country x 
+
+q_intersect <- (int_lineard - (agg_intq_all/agg_slopeq_all))/((1/agg_slopeq_all) - slope_d)
+```
+
 
 Incentives for Country Y to enter the carbon market:  
 
