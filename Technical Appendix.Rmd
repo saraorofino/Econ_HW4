@@ -437,12 +437,6 @@ $Optimal~Carbon~Tax = `r round(optimal_tax, digits=2)`$
 The total abatement cost is the area under the aggregate cost curve from 0 to 300. 
 
 $Total~Abatement~Cost~of~Carbon~Tax = `r round(costagg_tax_abatement, digits=2)`$  
- 
-   
-Each sector also pays tax for their emissions, so the amount paid for tax is added to the total abatement cost. The total cost of meeting the target with carbon tax is calculated as:
-
-$Total~Cost~Carbon~Tax = `r round(costagg_tax, digits=2)`$  
-
 
 
 2. Cost/Benefits to each Sector    
