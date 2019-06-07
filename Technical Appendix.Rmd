@@ -355,12 +355,17 @@ qc_abate <- function(p){qint_c + (qslope_c*p)}
 
 ##### Aggregate marginal cost of abatement curves: 
 # Sector C has lowest intercept - find the quantity where C and A intersect (Kink Point 1)
-kink1_q <- (int_a - int_c)/(slope_c - slope_a)
+kink1_q <- qint_c+qslope_c*int_a
 # Sector A/C lines cross at q=14.5
 
 # From the graph above Sector C has the lowest intercept followed by sector A; aggregate these two first 
 agg_intq_ca <- qint_c + qint_a
 agg_slopeq_ca <- qslope_c + qslope_a
+
+
+agg_ac <- function(q){
+  ((1/agg_slopeq_ca)*q) + (abs(agg_intq_ca)/agg_slopeq_ca)
+}
 
 # Kink point 2: where price = intercept B (9.32) plugged into the agg C/A curve
 kink2_q <- agg_intq_ca + (agg_slopeq_ca*int_b)
@@ -381,19 +386,22 @@ optimal_tax <- agg_abate(300)
 ###### Find how much each sector abates and the cost using the optimal tax 
 
 # Sector A 
-qtax_a <- qa_abate(optimal_tax) #abates 83.3
-costa_tax <- integrate(abate_a, lower = 0, upper = qtax_a)$value
+qtax_a <- qa_abate(optimal_tax) #abates 83.3 
+costa_tax <- integrate(abate_a, lower = 0, upper = qtax_a)$value + ((180-83.3)*optimal_tax)
+
 
 # Sector B 
 qtax_b <- qb_abate(optimal_tax) #abates 151.5
-costb_tax <- integrate(abate_b, lower = 0, upper = qtax_b)$value
+costb_tax <- integrate(abate_b, lower = 0, upper = qtax_b)$value + ((200-151.5)*optimal_tax)
 
 # Sector C 
 qtax_c <- qc_abate(optimal_tax) # abates 65.2
-costc_tax <- integrate(abate_c, lower = 0, upper = qtax_c)$value
+costc_tax <- integrate(abate_c, lower = 0, upper = qtax_c)$value + ((220-65.2)*optimal_tax)
 
-# Aggregated cost
-costagg_tax <- integrate(agg_abate, lower = 0, upper = 300)$value
+# Aggregated cost #abates 300, emits 300
+costagg_tax <- costa_tax+costb_tax+ costc_tax
+  
+#integrate(agg_abate, lower = 0, upper = 300)$value+ (300*optimal_tax)
 
 ####### Find Tax Revenue 
 tax_rev <- optimal_tax*300
@@ -402,10 +410,14 @@ tax_rev <- optimal_tax*300
 
 To find the tax that accomplishes the desired reduction of 300, aggreagate marginal cost curve for 3 sectors in Country X is found. Marginal cost of 300th unit on the aggregate marginal cost curve is equal to the tax required.
 
+$Optimal~Carbon~Tax = `r round(optimal_tax, digits=2)`$ 
 
 1. Total Cost of Carbon Tax    
 
-The total cost of the carbon tax is the area under the aggregate cost curve from 0 to 300.  
+The total cost of the carbon tax is the area under the aggregate cost curve from 0 to 300. 
+
+
+
 $Total~Cost~Carbon~Tax = `r round(costagg_tax, digits=2)`$  
 
 
@@ -413,11 +425,14 @@ $Total~Cost~Carbon~Tax = `r round(costagg_tax, digits=2)`$
 
 Plugging in the marginal cost of abatement(the tax in the case) will result in the quantity abated by each sector. The areas underneath the marginal cost curves for each sector from 0 to the quantity abated will give the total cost of abatement for each sector.  
 
-$Cost~to~Sector~A = `r round(costa_tax, digits=2)`$      
 
-$Cost~to~Sector~B = `r round(costb_tax, digits=2)`$      
+$Cost~to~Sector~A = `r round(costa_tax, digits=2)`$        
 
-$Cost~to~Sector~C = `r round(costc_tax, digits=2)`$    
+$Cost~to~Sector~B = `r round(costb_tax, digits=2)`$        
+
+$Cost~to~Sector~C = `r round(costc_tax, digits=2)`$  
+
+  
 
 3. Tax Revenue    
 
@@ -427,24 +442,44 @@ $Tax~Revenue = `r round(tax_rev, digits=5)`$
 
 ####c. Cap and Trade  
 
-
 Even though they are initially allocated current emissions minus 100, cap and trade will satisfy the equal marginal principle and the total reduction of 300 will be distributed between the three sectors just like in the part b. The marginal cost of abatement will be equal for all sectors which is equal to the marginal cost of abatement of 300th unit on the aggregate cost curve.
 
 1. Total Cost of Carbon Cap and Trade     
 
 The total cost of the cap and trade is the area under the aggregate cost curve from 0 to 300.
+```{r include=FALSE}
+# Sector A 
+#abates 83.3 , buys 16.7 from Sector B
+costa_cap <- integrate(abate_a, lower = 0, upper = qtax_a)$value + (16.7*optimal_tax)
 
-$Total~Cost~Cap~and~Trade = `r round(costagg_tax, digits=2)`$  
+
+# Sector B 
+ #abates 151.5, sells 51.5 to A and C
+costb_cap <- integrate(abate_b, lower = 0, upper = qtax_b)$value - (51.5*optimal_tax)
+
+# Sector C 
+# abates 65.2, buys 34.8 from B
+costc_cap <- integrate(abate_c, lower = 0, upper = qtax_c)$value + (34.8*optimal_tax)
+
+
+costagg_cap<-costa_cap+costb_cap+costc_cap
+
+#costagg_cap <- integrate(agg_abate, lower = 0, upper = 300)$value
+```
+$Total~Cost~Cap~and~Trade = `r round(costagg_cap, digits=2)`$  
 
 2. Cost/Benefits to each Sector  
 
-Each sector is allocated their current emissions minus 100 tons. The outcome of trading will be the same as if the carbon tax was imposed so the cost of abating is equal to the area under the marginal abatement curve from 0 to the quantity abated.   
+Each sector is allocated their current emissions minus 100 tons. The outcome of trading will be the same as if the carbon tax was imposed so the cost of abating is equal to the area under the marginal abatement curve from 0 to the quantity abated. 
 
-$Cost~to~Sector~A = `r round(costa_tax, digits=2)`$        
 
-$Cost~to~Sector~B = `r round(costb_tax, digits=2)`$        
 
-$Cost~to~Sector~C = `r round(costc_tax, digits=2)`$     
+$Cost~to~Sector~A = `r round(costa_cap, digits=2)`$      
+
+$Cost~to~Sector~B = `r round(costb_cap, digits=2)`$      
+
+$Cost~to~Sector~C = `r round(costc_cap, digits=2)`$  
+   
 
 3. Tax Revenue    
 
@@ -455,16 +490,58 @@ There is no tax revenue with a cap and trade.
 
 Country Y contains only Sector D and is not obligated to reduce its emissions. To enter into Country X's carbon market Country Y would need to cap its emissions at its current level (300 tons) but allows them to sell credits to Sectors A, B, and C in Country X.     
 
-Sector D's marginal cost of abatement curve is flipped and put on the same graph with the aggregate marginal cost curve for country X. Before the equilibrium point, it is cheaper for Country Y to abate, then country X. So, at a price between Country X and Country Y's cost, both of the countries are better off.  
+
 
 
 ```{r include = FALSE}
 
-# Find the intersection of the demand curve for Sector D and the aggregate abatement curve for country x 
 
-q_intersect <- (int_lineard - (agg_intq_all/agg_slopeq_all))/((1/agg_slopeq_all) - slope_d)
+qint_d <- (-int_lineard/slope_d)
+qslope_d <- (1/slope_d)
+
+agg_intq_xy <- agg_intq_all + qint_d
+agg_slopeq_xy <- agg_slopeq_all + qslope_d
+
+# Put in terms of price:
+agg_abate_xy <- function(q){
+  ((1/agg_slopeq_xy)*q) + (abs(agg_intq_xy)/agg_slopeq_xy)
+}
+
+# Plug in 300 to find the price of the tax 
+cost_xy <- agg_abate_xy(300)
+
+qd_abate <- function(p){qint_d + (qslope_d*p)}
+q_xy_d <- qd_abate(cost_xy)
+
+
+
+qxy_a <- qa_abate(cost_xy) #abates 66.7, buys  
+costa_xy <- integrate(abate_a, lower = 0, upper = qxy_a)$value + ((100-66.7)*cost_xy)
+
+
+# Sector B 
+qxy_b <- qb_abate(cost_xy) #abates 103, sells
+costb_xy <- integrate(abate_b, lower = 0, upper = qxy_b)$value - (3*cost_xy)
+
+# Sector C 
+qxy_c <- qc_abate(cost_xy) # abates 52.9 buys
+costc_xy <- integrate(abate_c, lower = 0, upper = qxy_c)$value + ((100-52.9)*cost_xy)
+
+#Sector D
+
+qxy_d <- qd_abate(cost_xy) # abates 77.4 - sells all
+costd_xy <- integrate(abate_d, lower = 0, upper = qxy_d)$value - (77.4*cost_xy)
+
+costagg_xy<-costa_xy+costb_xy+costc_xy+costd_xy
+
+#kink3_q <- agg_intq_all + (agg_slopeq_all*int_lineard)
+
+
+#costagg_xy2 <- integrate(abate_c, lower = 0 , upper = 3.84)$value+ integrate(agg_ac, lower = 3.84, upper =57.9)$value+ integrate(agg_abate, lower = 57.9, upper = 60.9)$value+ integrate(agg_abate_xy, lower = 60.9, upper = 300)$value
+
 ```
 
+Sector D is also added to the aggregate marginal cost curve and abatement quantity of 300 is plugged into the equation. That will result in the marginal cost of `r round(cost_xy, digits=2)`  which is less than the marginal cost of abatement for Country X only ( `r round(optimal_tax, digits=2)` ). Then the total cost of abatement of 300 is calculated to be `r round(costagg_xy, digits=2)`.
 
 Incentives for Country Y to enter the carbon market:  
 
@@ -489,9 +566,17 @@ How much local air pollution would you expect in Country X and Country Y?
 
 How much local air pollution would you expect in Country X and Country Y?  
 
-From the previous question, if country Y enters the carbon market, Country X will be emitting, so the amount of air pollution will be ...
+```{r include=FALSE}
+total_emission_x <- 300+q_xy_d
+```
 
-Since the Country Y will be abating XX more, they will be emitting XX tons of carbon, and that will result in XX tons of air pollution.
+From the previous question, if country Y enters the carbon market, Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be $ `r round(total_emission_x, digits=2)`
+
+```{r include=FALSE}
+total_emission_y <- 300-q_xy_d
+```
+
+Since the Country Y will be abating `r round(q_xy_d, digits=2)`  more, they will be emitting `r round(total_emission_y, digits=2)` tons of carbon, and that will result in `r round(total_emission_y, digits=2)` tons of air pollution.
 
 
 ####c. Advice on International Trade of Carbon Emission Credits  
