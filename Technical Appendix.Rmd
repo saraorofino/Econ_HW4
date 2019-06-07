@@ -150,7 +150,7 @@ Quadratic fit for Sector D's marginal abatement cost is found to be:
 $Marginal~Cost~Abatement~Sector~D = `r c1_d`*q + `r c2_d`*q^2 +`r int_d`$
 
 The estimated marginal abatement cost functions in all four sectors are graphed below in Figure 1
-```{r echo=FALSE }
+```{r echo=FALSE, fig.width= 4.5, fig.height= 4.5}
 
 ###### Graph of all sectors
 
@@ -171,6 +171,8 @@ all_sectors
 # I can't find a way to add legend
 
 ```
+
+
 *Figure 1:* Marginal Abatement Cost Funtions of Four Sectors
 
 ###2. Demand for Carbon Emissions 
@@ -591,7 +593,7 @@ How much local air pollution would you expect in Country X and Country Y?
 total_emission_x <- 300+q_xy_d
 ```
 
-From the previous question, the abatement of country Y is calculated as `r round(q_xy_d, digits=2)`, if it enters the carbon market. So, Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be $ `r round(total_emission_x, digits=2)`
+From the previous question, the abatement of country Y is calculated as `r round(q_xy_d, digits=2)`, if it enters the carbon market. So, Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be `r round(total_emission_x, digits=2)`.
 
 ```{r include=FALSE}
 total_emission_y <- 300-q_xy_d
